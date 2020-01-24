@@ -1,0 +1,22 @@
+#+TITLE: SLACS - Simulation matching
+#+AUTHOR: Philipp Denzel
+#+OPTIONS: author:nil
+#+OPTIONS: num:nil
+#+OPTIONS: toc:nil
+#+OPTIONS: date:nil
+#+OPTIONS: html-postamble:nil
+#+HTML_HEAD: <link rel="stylesheet" type="text/css" href="style.css" />
+#+LATEX: \pagenumbering{gobble}
+#+LaTeX_+HEADER: \usepackage{siunitx}
+
+
+1) Select a small set of SLACS lenses:
+   - possible candidates from Shu et al. 2017 (arXiv:1711.00072):
+     - QR: SDSSJ0753+3416 zl=0.1371, zs=0.9628, sigma_SDSS=208±12 km/s, R_eff=1.89 arcsec, q=0.86, PA=137 deg
+     - D:  SDSSJ1051+4439 zl=0.1634, zs=0.5380, sigma_SDSS=216±16 km/s, R_eff=1.66 arcsec, q=0.78, PA= 15 deg
+     - QD: SDSSJ1430+6104 zl=0.1688, zs=0.6537, sigma_SDSS=180±15 km/s, R_eff=2.24 arcsec, q=0.79, PA=160 deg
+   - possible candidates from Ferreras et al. 2007 (arXiv:0710.3159):
+     - Q
+2) Generate GLASS models
+3) Generate SEAGLE ensemble
+4) Generate synthetic images for GLASS ensemble / SEAGLE ensemble and find best matches
