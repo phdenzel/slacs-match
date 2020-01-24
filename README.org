@@ -9,11 +9,11 @@
 #+LATEX: \pagenumbering{gobble}
 
 
-1) Select a small set of SLACS lenses (Q=Quad, D=Double, R=Ring, D=Potentially difficult):
+1) Select a small set of SLACS lenses (Q=Quad, D=Double, R=Ring, H=Potentially difficult):
    - possible candidates from Shu et al. 2017 ([[https://arxiv.org/abs/1711.00072][arXiv:1711.00072]]):
      - QR: SDSSJ0753+3416 zl=0.1371, zs=0.9628, sigma_SDSS=208±12 km/s, R_eff=1.89 arcsec, q=0.86, PA=137.0 deg
      - D:  SDSSJ1051+4439 zl=0.1634, zs=0.5380, sigma_SDSS=216±16 km/s, R_eff=1.66 arcsec, q=0.78, PA= 15.0 deg
-     - QD: SDSSJ1430+6104 zl=0.1688, zs=0.6537, sigma_SDSS=180±15 km/s, R_eff=2.24 arcsec, q=0.79, PA=160.0 deg
+     - QH: SDSSJ1430+6104 zl=0.1688, zs=0.6537, sigma_SDSS=180±15 km/s, R_eff=2.24 arcsec, q=0.79, PA=160.0 deg
    - possible candidates from Bolton et al. 2008 ([[https://arxiv.org/abs/0805.1931][arXiv:0805.1931]]):
      - DR: SDSSJ0029-0055 zl=0.2270, zs=0.9313, sigma_SDSS=229±18 km/s, R_eff=2.16 arcsec, q=0.84, PA= 26.6 deg
    - possible candidates from Bolton et al. 2005 ([[https://arxiv.org/abs/astro-ph/0511453][arXiv:astro-ph/0511453]]) & Ferreras et al. 2007 ([[https://arxiv.org/abs/0710.3159][arxiv:0710.3159]]):
