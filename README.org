@@ -12,16 +12,18 @@
 *** Lens candidates
 
 1) Select a small set of SLACS lenses (Q=Quad, D=Double, R=Ring, H=Potentially difficult):
-   - possible candidates from Shu et al. 2017 ([[https://arxiv.org/abs/1711.00072][arXiv:1711.00072]]):
-     - QR: SDSSJ0753+3416 RA=07:53:46.2, Dec=+34:16:33, zl=0.1371, zs=0.9628, sigma_SDSS=208±12 km/s, R_eff=1.89 arcsec, q=0.86, PA=137.0 deg
-     - D:  SDSSJ1051+4439 RA=10:51:09.4, Dec=+44:39:08, zl=0.1634, zs=0.5380, sigma_SDSS=216±16 km/s, R_eff=1.66 arcsec, q=0.78, PA= 15.0 deg
-     - QH: SDSSJ1430+6104 RA=14:30:34.8, Dec=+61:04:04, zl=0.1688, zs=0.6537, sigma_SDSS=180±15 km/s, R_eff=2.24 arcsec, q=0.79, PA=160.0 deg
-   - possible candidates from Bolton et al. 2008 ([[https://arxiv.org/abs/0805.1931][arXiv:0805.1931]]):
-     - DR: SDSSJ0029-0055 RA=00:29:07.8, Dec=-00:55:50, zl=0.2270, zs=0.9313, sigma_SDSS=229±18 km/s, R_eff=2.16 arcsec, q=0.84, PA= 26.6 deg
-   - possible candidates from Bolton et al. 2005 ([[https://arxiv.org/abs/astro-ph/0511453][arXiv:astro-ph/0511453]]) & Ferreras et al. 2007 ([[https://arxiv.org/abs/0710.3159][arxiv:0710.3159]]):
-     - QR: SDSSJ0737+3216 RA=07:37:28.5, Dec=+32:16:18, zl=0.3223, zs=0.5812, sigma_SDSS=310±15 km/s, R_eff=2.16 arcsec, q=?, PA=?
-     - QR: SDSSJ0956+5100 RA=09:56:29.8, Dec=+51:00:06, zl=0.2405, zs=0.4700, sigma_SDSS=299±16 km/s, R_eff=2.33 arcsec, q=?, PA=?
-     - DR: SDSSJ1627-0053 RA=16:27:46.5, Dec=-00:53:57, zl=0.2076, zs=0.5241, sigma_SDSS=275±12 km/s, R_eff=2.08 arcsec, q=?, PA=?
+
+#+TBLNAME: Lens Candidates
+| Name           | Type     | R.A. (hms) | Decl. (dms) |    z_l |    z_s | sigma_{SDSS} [km/s] | R_eff (arcsec) |    q | PA (deg.) | Reference |
+| SDSSJ0753+3416 | Q (Ring) | 07:53:46.2 |   +34:16:33 | 0.1371 | 0.9628 | 208 ± 12            |           1.89 | 0.86 |     137.0 | [[https://arxiv.org/abs/1711.00072][1]]         |
+| SDSSJ1051+4439 | D        | 10:51:09.4 |   +44:39:08 | 0.1634 | 0.5380 | 216 ± 16            |           1.66 | 0.78 |      15.0 | [[https://arxiv.org/abs/1711.00072][1]]         |
+| SDSSJ1430+6104 | Q        | 14:30:34.8 |   +61:04:04 | 0.1688 | 0.6537 | 180 ± 15            |           2.24 | 0.79 |     160.0 | [[https://arxiv.org/abs/1711.00072][1]]         |
+| SDSSJ0029-0055 | D (Ring) | 00:29:07.8 |   -00:55:50 | 0.2270 | 0.9313 | 229 ± 18            |           2.16 | 0.84 |      26.6 | [[https://arxiv.org/abs/0805.1931][2]]         |
+| SDSSJ0737+3216 | Q (Ring) | 07:37:28.5 |   +32:16:18 | 0.3223 | 0.5812 | 310 ± 15            |           2.16 |      |           | [[https://arxiv.org/abs/astro-ph/0511453][3]]; [[https://arxiv.org/abs/0710.3159][4]]      |
+| SDSSJ0956+5100 | Q (Ring) | 09:56:29.8 |   +51:00:06 | 0.2405 | 0.4700 | 299 ± 16            |           2.33 |      |           | [[https://arxiv.org/abs/astro-ph/0511453][3]]; [[https://arxiv.org/abs/0710.3159][4]]      |
+| SDSSJ1627-0053 | D (Ring) | 16:27:46.5 |   -00:53:57 | 0.2076 | 0.5241 | 275 ± 12            |           2.08 |      |           | [[https://arxiv.org/abs/astro-ph/0511453][3]]; [[https://arxiv.org/abs/0710.3159][4]]      |
+
+
 2) Generate GLASS models
 3) Generate SEAGLE ensemble
 4) Generate synthetic images for GLASS ensemble / SEAGLE ensemble and find best matches
