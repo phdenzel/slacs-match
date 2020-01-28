@@ -11,21 +11,22 @@
 
 *** Lens candidates
 
-1) Select a small set of SLACS lenses:
-
+- Set of SLACS lenses (GLASS-modelled parameters in italics)
 #+TBLNAME: Lens Candidates
-| Name           | Type     | R.A. (hms) | Decl. (dms) |  z_{l} |  z_{s} | sigma_{SDSS} [km/s] | R_{eff} [arcsec] |    q | PA [deg] | Reference |
-| SDSSJ0753+3416 | Q (Ring) | 07:53:46.2 |   +34:16:33 | 0.1371 | 0.9628 | 208 ± 12            |             1.89 | 0.86 |    137.0 | [[https://arxiv.org/abs/1711.00072][1]]         |
-| SDSSJ1051+4439 | D        | 10:51:09.4 |   +44:39:08 | 0.1634 | 0.5380 | 216 ± 16            |             1.66 | 0.78 |     15.0 | [[https://arxiv.org/abs/1711.00072][1]]         |
-| SDSSJ1430+6104 | Q        | 14:30:34.8 |   +61:04:04 | 0.1688 | 0.6537 | 180 ± 15            |             2.24 | 0.79 |    160.0 | [[https://arxiv.org/abs/1711.00072][1]]         |
-| SDSSJ0029-0055 | D (Ring) | 00:29:07.8 |   -00:55:50 | 0.2270 | 0.9313 | 229 ± 18            |             2.16 | 0.84 |     26.6 | [[https://arxiv.org/abs/0805.1931][2]]         |
-| SDSSJ0737+3216 | Q (Ring) | 07:37:28.5 |   +32:16:18 | 0.3223 | 0.5812 | 310 ± 15            |             2.16 |      |          | [[https://arxiv.org/abs/astro-ph/0511453][3]]; [[https://arxiv.org/abs/0710.3159][4]]      |
-| SDSSJ0956+5100 | Q (Ring) | 09:56:29.8 |   +51:00:06 | 0.2405 | 0.4700 | 299 ± 16            |             2.33 |      |          | [[https://arxiv.org/abs/astro-ph/0511453][3]]; [[https://arxiv.org/abs/0710.3159][4]]      |
-| SDSSJ1627-0053 | D (Ring) | 16:27:46.5 |   -00:53:57 | 0.2076 | 0.5241 | 275 ± 12            |             2.08 |      |          | [[https://arxiv.org/abs/astro-ph/0511453][3]]; [[https://arxiv.org/abs/0710.3159][4]]      |
+| Name           | R.A. (hms) | Decl. (dms) |  z_{l} |  z_{s} | \sigma_{SDSS} [km/s] | R_{eff} [arcsec] | /R_{Einstein} [arcsec]/ | /q/ | Reference |
+| SDSSJ0753+3416 | 07:53:46.2 |   +34:16:33 | 0.1371 | 0.9628 | 208 ± 12             |             1.89 |                  1.3137 |     | [[https://arxiv.org/abs/1711.00072][1]]         |
+| SDSSJ1051+4439 | 10:51:09.4 |   +44:39:08 | 0.1634 | 0.5380 | 216 ± 16             |             1.66 |                  1.4956 |     | [[https://arxiv.org/abs/1711.00072][1]]         |
+| SDSSJ1430+6104 | 14:30:34.8 |   +61:04:04 | 0.1688 | 0.6537 | 180 ± 15             |             2.24 |                  1.1528 |     | [[https://arxiv.org/abs/1711.00072][1]]         |
+| SDSSJ0029-0055 | 00:29:07.8 |   -00:55:50 | 0.2270 | 0.9313 | 229 ± 18             |             2.16 |                  0.9657 |     | [[https://arxiv.org/abs/0805.1931][2]]         |
+| SDSSJ0737+3216 | 07:37:28.5 |   +32:16:18 | 0.3223 | 0.5812 | 310 ± 15             |             2.16 |                  1.0252 |     | [[https://arxiv.org/abs/astro-ph/0511453][3]]; [[https://arxiv.org/abs/0710.3159][4]]      |
+| SDSSJ0956+5100 | 09:56:29.8 |   +51:00:06 | 0.2405 | 0.4700 | 299 ± 16             |             2.33 |                  1.3956 |     | [[https://arxiv.org/abs/astro-ph/0511453][3]]; [[https://arxiv.org/abs/0710.3159][4]]      |
+| SDSSJ1627-0053 | 16:27:46.5 |   -00:53:57 | 0.2076 | 0.5241 | 275 ± 12             |             2.08 |                  1.2667 |     | [[https://arxiv.org/abs/astro-ph/0511453][3]]; [[https://arxiv.org/abs/0710.3159][4]]      |
 
 
-2) Generate GLASS models
+- GLASS models
 
-3) Generate SEAGLE ensemble
+  - \Omega_{m} = 0.307, \Omega_{\Lambda} = 0.693, H_{0} = 67.77 Tyrs^{-1}
 
-4) Generate synthetic images for GLASS ensemble / SEAGLE ensemble and find best matches
+- Generate SEAGLE ensemble
+
+- Generate synthetic images for GLASS ensemble / SEAGLE ensemble and find best matches

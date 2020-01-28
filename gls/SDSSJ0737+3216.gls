@@ -32,7 +32,7 @@ include_prior(
     'profile_steepness',
     'J3gradient',
     'magnification',
-#    'hubble_constant',
+    'hubble_constant',
     'PLsmoothness3',
 #   'shared_h',
 #   'external_mass',
@@ -41,8 +41,8 @@ include_prior(
 
 
 ### Cosmology
-omega(0.27, 0.73)
-hubble_constant(72.032)
+omega(0.307, 0.693)
+hubble_constant(67.77)
 # hubble_time(13.7)
 
 
