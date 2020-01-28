@@ -1,0 +1,103 @@
+### Automatically generated GLASS config script for a single lens
+###############################################################################
+import os
+import numpy as np
+
+try:
+    from Cocoa import NSSound
+    from time import sleep
+    sound = NSSound.alloc()
+    sound.initWithContentsOfFile_byReference_('/System/Library/Sounds/Glass.aiff', True)
+except ImportError:
+    sound = False
+
+
+### Meta info
+dpath = ''
+fname = 'SDSSJ0753+3416'
+fpath = os.path.join(dpath, fname)
+glass_basis('glass.basis.pixels', solver='rwalk')
+meta(author='GLSCFactory', notes='single-config-mode')
+setup_log(fpath+'.log')
+
+
+### Sampler config
+samplex_random_seed(0)
+samplex_acceptance(rate=0.25, tol=0.15)
+
+exclude_all_priors()
+include_prior(
+    'lens_eq',
+    'time_delay',
+    'profile_steepness',
+    'J3gradient',
+    'magnification',
+#    'hubble_constant',
+    'PLsmoothness3',
+#   'shared_h',
+#   'external_mass',
+    'external_shear'
+)
+
+
+### Cosmology
+omega(0.27, 0.73)
+hubble_constant(72.032)
+# hubble_time(13.7)
+
+
+###############################################################################
+### Lens
+name = 'SDSSJ0753+3416'
+zl = 0.1371
+globject(name)
+zlens(zl)
+
+pixrad(8)
+steepness(0.25, None)
+# hires(1, 3)
+
+smooth(2, include_central_pixel=False)
+local_gradient(45)
+
+# _mapr =
+# maprad(mapr)
+
+
+### Source
+zs = 0.9628
+
+# _ABCD = 
+# _parity =
+pos_par_td = [[-0.5067, 1.2377], 'min', [1.3058, 0.2826], 'min', None, [0.497, 1.1792], 'sad', None, [-0.6529, -0.8771], 'sad', None]
+ABCD = pos_par_td[0:1]+pos_par_td[2:-1:3]
+
+if len(ABCD) < 4:
+    symm()
+    shear(0.01)
+else:
+    shear(0.3)
+
+source(zs, *pos_par_td)
+
+tdelay = None
+tderr = None
+# explicit time delays
+if tdelay:
+    for i, td in enumerate(tdelay[1:]):
+        if td:
+            delay(ABCD[i], ABCD[i+1], [td-tderr[i+1], td+tderr[i+1]])
+
+# extx, exty = 
+# extm = PointMass(extx, exty, rc=0)
+# external_mass(extm, (0.01, 10))
+
+
+###############################################################################
+model(1000)
+savestate(fpath+'.state')
+
+if sound:
+    sound.play()
+    sleep(2)
+    sound.stop()
