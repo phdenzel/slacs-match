@@ -26,7 +26,7 @@
 
 - GLASS models
 
-  - \Omega_{m} = 0.307, \Omega_{\Lambda} = 0.693, H_{0} = 67.77 Tyrs^{-1}
+  - \Omega_{m} = 0.307, \Omega_{\Lambda} = 0.693, H_{0} = 67.77 km/s/Mpc
 
 - Generate SEAGLE ensemble
 
