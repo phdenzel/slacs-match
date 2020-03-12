@@ -31,3 +31,8 @@
 - Generate SEAGLE ensemble
 
 - Generate synthetic images for GLASS ensemble / SEAGLE ensemble and find best matches
+
+
+*** Preliminary results
+
+First tests of the lens modeller show potential: [[https://mega.nz/#F!EfhVTCxa!a4QUrpfii8qpNgBiJChfNw][Here]] are movies of a reconstruction test of 15 lens models with roughly correct Einstein radii, trying out 50 random rotation angles for each model.
