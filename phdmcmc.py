@@ -178,7 +178,7 @@ def mcmc_mh(log_lh, log_p, init,
             # some verbosity
             if 0 < verbose < 3:
                 np.set_printoptions(formatter={'float': '{: 7.3f}'.format})
-                acc_perc = 100. * np.sum(n_accepted) / (max(1, i) * nwalkers)
+                acc_perc = 100. * np.sum(n_accepted) / ((i+1) * nwalkers)
                 message = "{:4d} / {:4d}: [{:4d}] \t theta {} \t logP {:+9.4f} \t acceptance {:6.2f}%\r".format(
                     i, iterations, iwalker, pars_new, llh_new, acc_perc)
                 if verbose == 1:
@@ -188,13 +188,13 @@ def mcmc_mh(log_lh, log_p, init,
                     print(message)
         if verbose == 3:
             np.set_printoptions(formatter={'float': '{: 7.3f}'.format})
-            acc_perc = 100. * np.sum(n_accepted) / (max(1, i) * nwalkers)
+            acc_perc = 100. * np.sum(n_accepted) / ((i+1) * nwalkers)
             message = "{:4d} / {:4d}: \t theta {} \t logP {:+9.4f} \t acceptance {:6.2f}%\r".format(
                     i, iterations, acc_pars[0, max(0, n_accepted[0]-1), :], acc_llhs[0, max(0, n_accepted[0]-1)], acc_perc)
             print(message)
         elif (verbose == 4) and ((i % 1000) == 0):
             np.set_printoptions(formatter={'float': '{: 7.3f}'.format})
-            acc_perc = 100. * np.sum(n_accepted) / (max(1, i) * nwalkers)
+            acc_perc = 100. * np.sum(n_accepted) / ((i+1) * nwalkers)
             message = "{:4d} / {:4d}: \t theta {} \t logP {:+9.4f} \t acceptance {:6.2f}%\r".format(
                     i, iterations, acc_pars[0, max(0, n_accepted[0]-1), :], acc_llhs[0, max(0, n_accepted[0]-1)], acc_perc)
             print(message)

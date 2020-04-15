@@ -26,7 +26,9 @@ gcl.GLEAMcmaps.register_all()
 idx = 0         # index of lens
 angle = 0       # rotation angle
 pixrad = 11     # pixrad of resampled kappa map
-mdl_index = -1  # model index (-1 is ensemble average)
+imdl = -1        # model index
+npars = 1       # dimensions of the MCMC parameter space
+nwalkers = 360  # number of MCMC walkers
 
 
 # Load lensing data and models
@@ -66,6 +68,10 @@ lm = models[idx]
 lm.resample(pixrad, data_attr='data', create_instance=True, zl=zl[lens_id], zs=zs[lens_id])
 reconsrc = ReconSrc(lo, lm.resampled['obj'], M=60, M_fullres=256, mask_keys=['circle'])
 reconsrc.inv_proj_matrix(use_mask=True)
+print("# <LensModel>")
+print(lm.__v__)
+print("# <Reconsrc>")
+print(reconsrc.__v__)
 
 
 # Prepare functions for MCMC
@@ -84,7 +90,7 @@ reconsrc.inv_proj_matrix(use_mask=True)
 #                      reduced=False, sigma2=0.0625*np.sqrt(reconsrc.lensobject.data))
 #     return np.log(prob)
 
-def log_prior(theta):
+def log_prior(theta, **kw):
     angle = theta
     angle = angle % 360
     if 0.0 < angle < 360.:
@@ -98,26 +104,24 @@ def log_likelihood(theta, args=(), **kw):
     chi2 = run_model(reconsrc, angle=angle, dzsrc=0, mdl_index=mdl_index,
                      reduced=False, sigma2=0.0625*np.sqrt(reconsrc.lensobject.data),
                      from_cache=True, cached=True, save_to_cache=True, flush_cache=True)
-    prob = -0.5* chi2
-    # prob = fchi2.logsf(chi2, len(theta))
+    prob = -0.5 * chi2
     return prob
 
 
 # Start MCMC
-npars = 1
-nwalkers = 360
 pars = np.zeros((nwalkers, npars))
 pars[:, 0] = np.random.rand(nwalkers) * 360
-print(pars[0].shape)
+print("N walkers: {}".format(nwalkers))
+print("N dims:    {}".format(npars))
 
 print("Starting MCMC run...")
-kw = dict(method='lsqr', dzsrc=0, mdl_index=0, reduced=False, sigma2=0.0625*np.sqrt(reconsrc.lensobject.data))
+kw = dict(method='lsqr', dzsrc=0, mdl_index=imdl, reduced=False, sigma2=0.0625*np.sqrt(reconsrc.lensobject.data))
 ti = time.time()
-acc, rej, probs, priors = phdmcmc.mcmc_mh(
+acc, rej, probs, priors, n_acc = phdmcmc.mcmc_mh(
     log_likelihood, log_prior, pars, args=(reconsrc),
-    stepsize=0.5, nwalkers=nwalkers, iterations=1, verbose=True, **kw)
+    stepsize=0.05, nwalkers=nwalkers, iterations=50, verbose=1, **kw)
 tf = time.time()
 print("Execution time: {}".format(tf-ti))
 
 with open("mcmc.pkl", 'wb') as f:
-    pickle.dump((acc, rej, probs, priors), f)
+    pickle.dump((acc, rej, probs, priors, n_acc), f)
