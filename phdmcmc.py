@@ -26,43 +26,23 @@ def flat_chain(acc, rej, probs, priors, n_acc, discard=0):
     prs_arr = priors[pmsk]
     return acc_arr, rej_arr, pbs_arr, prs_arr
 
-
-def proposal_normal(theta, accepted=[]):
+def proposal_lorenzian(theta, accepted=[], stepsize=1.0):
     """
-    Propose new set of parameters for Metropolis-Hastings algorithm
+    Propose new set of parameters for Metropolis-Hastings algorithm from a Lorentzian distribution
     """
-    sample = np.random.normal
-    scale = [0.5]*len(theta)
-    return np.array([sample(t, scale[i]) for i, t in enumerate(theta)])
+    return np.random.standard_cauchy(theta.shape)
 
-
-def proposal_normal2(theta, accepted=[]):
+def proposal_norm(theta, accepted=[], stepsize=1.0):
     """
-    Propose new set of parameters for Metropolis-Hastings algorithm
+    Propose new set of parameters for Metropolis-Hastings algorithm from a Gaussian distribution
     """
-    sample = np.random.normal
-    accepted = np.asarray(accepted)
-    if len(accepted) < 1:
-        scale = [0.5]*len(theta)
-    elif len(accepted) < 10:
-        scale = 0.5*accepted
-    else:
-        scale = np.std(accepted, axis=0)
-    return np.array([sample(t, scale[i]) for i, t in enumerate(theta)])
-
-
-def proposal_rvs(theta, **kwargs):
-    """
-    Propose new set of parameters for Metropolis-Hastings algorithm
-    """
-    pass
-
+    return np.random.uniform(low=theta-stepsize, high=theta+stepsize, size=theta.shape)
 
 def proposal(theta, accepted=[], stepsize=1.0):
     """
-    Propose new set of parameters for Metropolis-Hastings algorithm
+    Propose new set of parameters for Metropolis-Hastings algorithm from a Uniform distribution
     """
-    return np.random.uniform(low=theta-stepsize, high=theta+stepsize, size=theta.shape)
+    return np.random.normal(theta, stepsize, theta.shape)
 
 
 def acceptance(p, p_new):

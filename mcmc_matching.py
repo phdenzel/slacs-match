@@ -8,7 +8,6 @@ import time
 import cPickle as pickle
 from functools import partial
 import numpy as np
-from scipy.stats.distributions import chi2 as fchi2
 import pandas as pd
 from scipy import ndimage
 from matplotlib import pyplot as plt
@@ -26,9 +25,11 @@ gcl.GLEAMcmaps.register_all()
 idx = 0         # index of lens
 angle = 0       # rotation angle
 pixrad = 11     # pixrad of resampled kappa map
-imdl = -1        # model index
+imdl = 0        # model index
 npars = 1       # dimensions of the MCMC parameter space
-nwalkers = 360  # number of MCMC walkers
+nwalkers = 50   # number of MCMC walkers
+iters = 100     # number of MCMC iterations
+step = 25.0     # step width
 
 
 # Load lensing data and models
@@ -73,23 +74,11 @@ print(lm.__v__)
 print("# <Reconsrc>")
 print(reconsrc.__v__)
 
+# Prepare sigma2
+sig2 = 5e-1*0.125 * np.sqrt(reconsrc.lensobject.data)
+kw = dict(method='lsqr', dzsrc=0, reduced=False, sigma2=sig2.copy())
 
 # Prepare functions for MCMC
-#
-# def log_prior2(theta):
-#     angle, dzsrc = theta
-#     if 0.0 < angle < 360. and -0.2 < dzsrc < 0.2:
-#         return 1.0
-#     return -np.inf
-#
-# def log_likelihood2(theta, reconsrc, **kw):
-#     angle, dzsrc = theta
-#     mdl_index = kw.get('mdl_index', 0)
-#     prob = run_model(reconsrc, angle=angle, dzsrc=dzsrc,
-#                      mdl_index=mdl_index,
-#                      reduced=False, sigma2=0.0625*np.sqrt(reconsrc.lensobject.data))
-#     return np.log(prob)
-
 def log_prior(theta, **kw):
     angle = theta
     angle = angle % 360
@@ -99,15 +88,26 @@ def log_prior(theta, **kw):
 
 def log_likelihood(theta, args=(), **kw):
     angle = theta
-    mdl_index = kw.get('mdl_index', 0)
     reconsrc = args
-    chi2 = run_model(reconsrc, angle=angle, dzsrc=0, mdl_index=mdl_index,
-                     reduced=False, sigma2=0.0625*np.sqrt(reconsrc.lensobject.data),
-                     from_cache=True, cached=True, save_to_cache=True, flush_cache=True)
+    chi2 = run_model(reconsrc, angle=angle, **kw)
     prob = -0.5 * chi2
     return prob
 
 
+# for angle in [0, 10, 70, 160, 220, 280, 340]:
+#     chi2, (srcplane, synth, resids, s2) = \
+#         run_model(reconsrc, angle=angle, mdl_index=imdl, output_maps=True, **kw)
+#     print(chi2)
+#     print(np.sum(resids))
+#     plt.imshow(resids, cmap='vilux')
+#     plt.show()
+
+#     plt.imshow(s2)
+#     plt.show()
+# exit(1)
+
+
+###
 # Start MCMC
 pars = np.zeros((nwalkers, npars))
 pars[:, 0] = np.random.rand(nwalkers) * 360
@@ -115,13 +115,15 @@ print("N walkers: {}".format(nwalkers))
 print("N dims:    {}".format(npars))
 
 print("Starting MCMC run...")
-kw = dict(method='lsqr', dzsrc=0, mdl_index=imdl, reduced=False, sigma2=0.0625*np.sqrt(reconsrc.lensobject.data))
-ti = time.time()
-acc, rej, probs, priors, n_acc = phdmcmc.mcmc_mh(
-    log_likelihood, log_prior, pars, args=(reconsrc),
-    stepsize=0.05, nwalkers=nwalkers, iterations=50, verbose=1, **kw)
-tf = time.time()
-print("Execution time: {}".format(tf-ti))
 
-with open("mcmc.pkl", 'wb') as f:
-    pickle.dump((acc, rej, probs, priors, n_acc), f)
+for imdl in range(100, reconsrc.model.N):
+    
+    print("Model {}".format(imdl))
+    
+    acc, rej, probs, priors, n_acc = phdmcmc.mcmc_mh(
+        log_likelihood, log_prior, pars, args=(reconsrc), mdl_index=imdl,
+        stepsize=step, nwalkers=nwalkers, iterations=iters, verbose=1, **kw)
+
+    with open("mcmc/mcmc_{}_mdl{}.pkl".format(ids[idx], imdl), 'wb') as f:
+        pickle.dump((acc, rej, probs, priors, n_acc), f)
+
