@@ -1,0 +1,7 @@
+tests
+synths
+models
+mcmc
+.ipynb_checkpoints
+*.code-workspace
+.vscode
