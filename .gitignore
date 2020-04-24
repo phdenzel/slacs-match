@@ -1,7 +1,8 @@
-tests
-synths
+match_plots
 models
 mcmc
+tests/testing_deflect.ipynb
+tests/matching_algo.ipynb
 .ipynb_checkpoints
 *.code-workspace
 .vscode
