@@ -54,6 +54,13 @@ def get_mcmcstats(mcmc_chains, rawmcmc_chains=None):
     prcstr = "Acceptance:\t{:5.2f}%".format((100.*acc.shape[0])/(acc.shape[0]+rej.shape[0]))
     print("\n".join([dimstr, nwkstr, accstr, rejstr, prcstr]))
 
+def read_mcmctxt(filename):
+    dta = np.loadtxt(filename)
+    mdl_idcs = dta[:, 0].astype(int)
+    logprobs = dta[:, 1]
+    theta = dta[:, 2:]
+    return mdl_idcs, logprobs, theta
+
 
 
 if __name__ == "__main__":
@@ -82,10 +89,6 @@ if __name__ == "__main__":
     clusters = np.array(clusters)
     maxP = np.array(maxP)
 
-    print(peaks.shape)
-    # print(clusters.shape)
-    print(maxP.shape)
-
     # Evaluate MCMC data
     best_to_worst = maxP.argsort()[::-1]
     mcmcdata = np.zeros(best_to_worst.shape + (3*peaks.shape[-1],))
@@ -100,7 +103,3 @@ if __name__ == "__main__":
                delimiter='   \t',
                header=hdrstr)
     print mcmcdata
-
-
-    
-    
