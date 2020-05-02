@@ -12,23 +12,20 @@ sys.path.append(gleam_root)
 from gleam.utils.lensing import LensModel
 from gleam.lensobject import LensObject
 from gleam.reconsrc import ReconSrc, run_model
-from gleam.utils.encode import an_sort
-from gleam.utils.plotting import plot_scalebar, plot_labelbox
-import gleam.utils.colors as gcl
-gcl.GLEAMcmaps.register_all()
 
 
 # Parameter settings
 ids = ['SDSSJ0029-0055', 'SDSSJ0737+3216', 'SDSSJ0753+3416', 'SDSSJ0956+5100',
        'SDSSJ1051+4439', 'SDSSJ1430+6104', 'SDSSJ1627-0053']
-idx = 2
+idx = 0
 lens = ids[idx] # lens name
 pixrad = 11     # pixrad of resampled kappa map
-sigf = 2e+1     # multiplier of the Poisson noise
+sigf = 1        # multiplier of the Poisson noise
 npars = 1       # dimensions of the MCMC parameter space
 nwalkers = 50   # number of MCMC walkers
 iters = 100     # number of MCMC iterations
 step = 25.0     # step width
+
 
 
 # Functions
@@ -107,12 +104,14 @@ if __name__ == "__main__":
     lo = load_lo(lens, verbose=True)
     lm = load_lm(lens, update_pixrad=pixrad, verbose=True)
     print("# <ReconSrc>")
-    reconsrc = ReconSrc(lo, lm.resampled['obj'], M=60, M_fullres=256, mask_keys=['circle'])
-    reconsrc.inv_proj_matrix(use_mask=True)
+    reconsrc = ReconSrc(lo, lm.resampled['obj'], M=80, M_fullres=256, mask_keys=['circle'])
+    reconsrc.inv_proj_matrix(use_mask=False)
     print(reconsrc.__v__ + "\n")
-    sig2 = sigf*np.sqrt(reconsrc.lensobject.data)
-    
-    kw = dict(method='lsqr', dzsrc=0, reduced=False, sigma2=sig2.copy())
+    sig2 = sigf * reconsrc.lensobject.data
+
+    kw = dict(method='minres', reduced=False, use_psf=False, sigma2=sig2.copy(),
+              nonzero_only=True, within_radius=0.8,
+              cached=True, from_cache=False, save_to_cache=False)
 
     # Start MCMC
     pars = np.zeros((nwalkers, npars))
@@ -121,7 +120,7 @@ if __name__ == "__main__":
     print("N dims:    {}".format(npars))
     print("Starting MCMC run...")
 
-    for imdl in range(257, reconsrc.model.N):
+    for imdl in range(0, reconsrc.model.N):
         print("Model {}".format(imdl))
         
         acc, rej, probs, priors, n_acc = phdmcmc.mcmc_mh(

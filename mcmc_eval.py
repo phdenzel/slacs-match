@@ -19,7 +19,8 @@ ids = ['SDSSJ0029-0055', 'SDSSJ0737+3216', 'SDSSJ0753+3416', 'SDSSJ0956+5100',
 idx = 0
 lens = ids[idx]     # lens name   
 pixrad = 11         # pixrad of resampled kappa map
-sigf = 5e-1*0.125   # multiplier of the Poisson noise
+sigf = 1            # multiplier of the Poisson noise
+
 
 
 # Functions
@@ -70,7 +71,7 @@ if __name__ == "__main__":
     print("# <ReconSrc>")
     reconsrc = ReconSrc(lo, lm.resampled['obj'], M=60, M_fullres=256, mask_keys=['circle'])
     print(reconsrc.__v__ + "\n")
-    sig2 = sigf*np.sqrt(reconsrc.lensobject.data)
+    sig2 = sigf*reconsrc.lensobject.data
     
     kw = dict(method='lsqr', dzsrc=0, reduced=False, sigma2=sig2.copy())
 
