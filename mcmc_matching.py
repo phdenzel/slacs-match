@@ -17,16 +17,17 @@ from gleam.reconsrc import ReconSrc, run_model
 # Parameter settings
 ids = ['SDSSJ0029-0055', 'SDSSJ0737+3216', 'SDSSJ0753+3416', 'SDSSJ0956+5100',
        'SDSSJ1051+4439', 'SDSSJ1430+6104', 'SDSSJ1627-0053']
-idx = 0
-lens = ids[idx] # lens name
-pixrad = 11     # pixrad of resampled kappa map
-sigf = 1        # multiplier of the Poisson noise
-npars = 1       # dimensions of the MCMC parameter space
-nwalkers = 50   # number of MCMC walkers
-iters = 100     # number of MCMC iterations
-step = 25.0     # step width
-
-
+idx = 6
+lens = ids[idx]           # lens name
+pixrad = 11               # pixrad of resampled kappa map
+sigf = [1., 1., 4., 1.,
+        4., 1., 1.][idx]  # multiplier of the Poisson noise
+wrad = [.8, .5, .8, .8,
+        .8, .8, .8][idx]  # chi2 radius
+npars = 1                 # dimensions of the MCMC parameter space
+nwalkers = 25             # number of MCMC walkers
+iters = 100               # number of MCMC iterations
+step = 25.0               # step width
 
 # Functions
 def load_lo(lens, loaddir='data/', extension='json', verbose=False):
@@ -99,18 +100,21 @@ def log_likelihood(theta, args=(), **kw):
 
 
 if __name__ == "__main__":
-    
+
     print("Loading data files...")
     lo = load_lo(lens, verbose=True)
     lm = load_lm(lens, update_pixrad=pixrad, verbose=True)
     print("# <ReconSrc>")
     reconsrc = ReconSrc(lo, lm.resampled['obj'], M=80, M_fullres=256, mask_keys=['circle'])
-    reconsrc.inv_proj_matrix(use_mask=False)
+    reconsrc.inv_proj_matrix(use_mask=True)
+    sig2 = sigf * np.abs(reconsrc.lensobject.data)
+    sig2[sig2 <= 0] = sig2[sig2 > 0].min()
     print(reconsrc.__v__ + "\n")
-    sig2 = sigf * reconsrc.lensobject.data
+
+    # reconsrc.calc_psf('psf/tinytim_ACS.fits')
 
     kw = dict(method='minres', reduced=False, use_psf=False, sigma2=sig2.copy(),
-              nonzero_only=True, within_radius=0.8,
+              nonzero_only=True, within_radius=wrad,
               cached=True, from_cache=False, save_to_cache=False)
 
     # Start MCMC
@@ -127,5 +131,5 @@ if __name__ == "__main__":
             log_likelihood, log_prior, pars, args=(reconsrc), mdl_index=imdl,
             stepsize=step, nwalkers=nwalkers, iterations=iters, verbose=1, **kw)
 
-        with open("mcmc/mcmc_{}_mdl{}.pkl".format(ids[idx], imdl), 'wb') as f:
+        with open("mcmc/mcmc_{}_mdl{:03d}.pkl".format(ids[idx], imdl), 'wb') as f:
             pickle.dump((acc, rej, probs, priors, n_acc), f)
