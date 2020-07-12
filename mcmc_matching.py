@@ -129,7 +129,7 @@ if __name__ == "__main__":
         
         acc, rej, probs, priors, n_acc = phdmcmc.mcmc_mh(
             log_likelihood, log_prior, pars, args=(reconsrc), mdl_index=imdl,
-            stepsize=step, nwalkers=nwalkers, iterations=iters, verbose=1, **kw)
+            stepsize=step, nwalkers=nwalkers, iterations=iters, verbose=2, **kw)
 
         with open("mcmc/mcmc_{}_mdl{:03d}.pkl".format(ids[idx], imdl), 'wb') as f:
             pickle.dump((acc, rej, probs, priors, n_acc), f)

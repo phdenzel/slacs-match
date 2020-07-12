@@ -8,6 +8,7 @@ from functools import partial
 import numpy as np
 import pandas as pd
 from scipy import ndimage
+import matplotlib as mpl
 from matplotlib import pyplot as plt
 gleam_root = "/Users/phdenzel/gleam"
 sys.path.append(gleam_root)
@@ -22,12 +23,17 @@ from mcmc_eval import read_mcmctxt
 # Parameter settings
 ids = ['SDSSJ0029-0055', 'SDSSJ0737+3216', 'SDSSJ0753+3416', 'SDSSJ0956+5100',
        'SDSSJ1051+4439', 'SDSSJ1430+6104', 'SDSSJ1627-0053']
-idx = 0
-lens = ids[idx]                                                      # lens name
-pixrad = 11                                      # pixrad of resampled kappa map
-sigf = [1,][idx]                               # multiplier of the Poisson noise
-# mdl_range = range(  0,   1)                            # range of models to plot
-# angles = [np.random.rand(11) * 360] * len(mdl_range)   # range of angles to plot
+idx = 5
+lens = ids[idx]              # lens name
+pixrad = 11                  # pixrad of resampled kappa map
+sigf = [1., 1., 4., 1.,
+        4., 1., 1.][idx]     # multiplier of the Poisson noise
+dmaxf = [1., 0.25, 1., 0.6, .1, .065, 1.]
+smaxf = [0.25, 0.1, 0.25, 0.15, 0.1, 0.25, 0.25]
+wrad = [.8, .5, .8, .8,
+        .8, .8, .8][idx]     # chi2 radius
+# mdl_range = range(  0,   1)    # range of models to plot
+# angles = [np.random.rand( 11) * 360] * len(mdl_range)  # range of angles to plot
 mdl_range, _, angles = read_mcmctxt('mcmc/mcmceval_{}.txt'.format(lens))
 
 
@@ -52,11 +58,19 @@ def plot_models(reconsrc, lens_id, model_index, angles, figsize=None,
             lens_id, name_add, reconsrc.model_index, angle)
         print("# {}".format(name))
         print("Chi2: {:9.4f}".format(chi2))
+
+        dmax = .065 * np.max(reconsrc.lensobject.data)
+        sbf = (reconsrc.lensobject.px2arcsec[0]/reconsrc.src_pxscale)**2
+        cmap = 'gravic'
+        # cmap = gcl.ReNormColormapAdaptor(gcl.GLEAMcmaps.vilux, mpl.colors.LogNorm(0, dmax))
+        plt_kw = dict(vmin=0, origin='lower')
+        
         # Source plane plot
         fig, ax = plt.subplots()
         fig.set_size_inches(figsize, forward=True)
-        plt.imshow(srcplane, origin='lower', cmap='vilux', vmin=0, vmax=0.8,
-                   extent=reconsrc.src_extent)
+        plt.imshow(srcplane, extent=reconsrc.src_extent,
+                   vmax=0.25*sbf*dmax, cmap=cmap,
+                   **plt_kw)
         plot_scalebar(R=reconsrc.r_max)
         plt.axis('off')
         fig.axes[0].get_xaxis().set_visible(False)
@@ -64,13 +78,14 @@ def plot_models(reconsrc, lens_id, model_index, angles, figsize=None,
         # plt.colorbar()
         savename = "{}_srcplane{}".format(name, extension)
         plt.savefig(savedir+savename, bbox_inches='tight')
-        # print(savename)
         plt.close()
+        
         # Synthetic plot
         fig, ax = plt.subplots()
         fig.set_size_inches(figsize, forward=True)
-        plt.imshow(synth, origin='lower', cmap='vilux',
-                   vmin=0, extent=reconsrc.lensobject.extent)
+        plt.imshow(synth, extent=reconsrc.lensobject.extent,
+                   vmax=dmax, cmap=cmap,
+                   **plt_kw)
         plot_scalebar(R=reconsrc.lensobject.maprad, length=1)
         plt.axis('off')
         fig.axes[0].get_xaxis().set_visible(False)
@@ -78,13 +93,14 @@ def plot_models(reconsrc, lens_id, model_index, angles, figsize=None,
         # plt.colorbar()
         savename = "{}_synth{}".format(name, extension)
         plt.savefig(savedir+savename, bbox_inches='tight')
-        # print(savename)
         plt.close()
+        
         # Residual plot
         fig, ax = plt.subplots()
         fig.set_size_inches(figsize, forward=True)
-        plt.imshow(resids, origin='lower', cmap='vilux', vmin=0, vmax=0.25,
-                   extent=reconsrc.lensobject.extent)
+        plt.imshow(resids, extent=reconsrc.lensobject.extent,
+                   vmax=0.05, cmap='vilux',
+                   **plt_kw)
         plot_scalebar(R=reconsrc.lensobject.maprad, length=1)
         plt.axis('off')
         fig.axes[0].get_xaxis().set_visible(False)
@@ -94,22 +110,23 @@ def plot_models(reconsrc, lens_id, model_index, angles, figsize=None,
         # plt.colorbar()
         savename = "{}_resid{}".format(name, extension)
         plt.savefig(savedir+savename, bbox_inches='tight')
-        # print(savename)
         plt.close()
+        
         # Kappa plot
         fig, ax = plt.subplots()
         fig.set_size_inches(figsize, forward=True)
         kappa_map_plot(reconsrc.model, mdl_index=model_index, extent=reconsrc.model.extent,
-                       levels=8, log=True, contours=False, scalebar=True)
+                       levels=17, log=True, contours=False, scalebar=True)
         savename = "{}_kappa{}".format(name, extension)
         plt.savefig(savedir+savename, bbox_inches='tight')
-        # print(savename)
         plt.close()
+        
         # Lens plot
         fig, ax = plt.subplots()
         fig.set_size_inches(figsize, forward=True)
-        plt.imshow(reconsrc.lens_map(mask=True), origin='lower', cmap='vilux',
-                   vmin=0, extent=reconsrc.lensobject.extent)
+        plt.imshow(reconsrc.lens_map(mask=True), extent=reconsrc.lensobject.extent,
+                   vmax=dmax, cmap=cmap,
+                   **plt_kw)
         plot_scalebar(R=reconsrc.lensobject.maprad, length=1)
         plt.axis('off')
         fig.axes[0].get_xaxis().set_visible(False)
@@ -117,8 +134,9 @@ def plot_models(reconsrc, lens_id, model_index, angles, figsize=None,
         # plt.colorbar()
         savename = "{}_data{}".format(name, extension)
         plt.savefig(savedir+savename, bbox_inches='tight')
-        # print(savename)
         plt.close()
+
+        return chi2
 
 
 
@@ -127,17 +145,23 @@ if __name__ == "__main__":
     lo = load_lo(lens, verbose=True)
     lm = load_lm(lens, update_pixrad=pixrad, verbose=True)
     print("# <ReconSrc>")
-    reconsrc = ReconSrc(lo, lm.resampled['obj'], M=80, M_fullres=256, mask_keys=['circle'])
+    reconsrc = ReconSrc(lo, lm.resampled['obj'], M=120, M_fullres=400, mask_keys=['circle'])
     print(reconsrc.__v__ + "\n")
-    sig2 = sigf*reconsrc.lensobject.data
+    reconsrc.calc_psf("psf/tinytim_ACS.fits", normalize=True, window_size=8, verbose=True)
+    sig2 = sigf*np.abs(reconsrc.lensobject.data)
+    sig2[sig2 <= 0] = sig2[sig2 > 0].min()
 
-    kw = dict(method='minres', use_psf=False, sigma2=sig2.copy(),
-              nonzero_only=True, within_radius=0.8,
+    kw = dict(method='minres', reduced=False, use_psf=True, use_filter=False,
+              sigma2=sig2.copy(), nonzero_only=True, within_radius=wrad,
               cached=True, from_cache=False, save_to_cache=False)
 
+    output = []
+
     for i, model_idx in enumerate(mdl_range):
-        plot_models(reconsrc, lens, model_idx, angles[i], figsize=(7.83, 7.83),
-                    name_add="_mcmc{:03d}".format(i), extension='.png', **kw)
+        chi2 = plot_models(reconsrc, lens, model_idx, angles[i], figsize=(7.83, 7.83),
+                           name_add="_mcmc{:03d}".format(i), extension='.png', **kw)
+
+        output.append((chi2, model_idx))
 
     if 0:
         pklname = 'synths/{}/{}_pixrad{}_reconsrc.pkl'.format(lens, lens, pixrad)

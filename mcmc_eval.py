@@ -16,7 +16,7 @@ from mcmc_matching import load_lo, load_lm
 # Parameter settings
 ids = ['SDSSJ0029-0055', 'SDSSJ0737+3216', 'SDSSJ0753+3416', 'SDSSJ0956+5100',
        'SDSSJ1051+4439', 'SDSSJ1430+6104', 'SDSSJ1627-0053']
-idx = 0
+idx = 5
 lens = ids[idx]     # lens name   
 pixrad = 11         # pixrad of resampled kappa map
 sigf = 1            # multiplier of the Poisson noise
@@ -69,7 +69,7 @@ if __name__ == "__main__":
     lo = load_lo(lens, verbose=True)
     lm = load_lm(lens, update_pixrad=pixrad, verbose=True)
     print("# <ReconSrc>")
-    reconsrc = ReconSrc(lo, lm.resampled['obj'], M=60, M_fullres=256, mask_keys=['circle'])
+    reconsrc = ReconSrc(lo, lm.resampled['obj'], M=80, M_fullres=256, mask_keys=['circle'])
     print(reconsrc.__v__ + "\n")
     sig2 = sigf*reconsrc.lensobject.data
     
@@ -80,7 +80,8 @@ if __name__ == "__main__":
     clusters = []
     maxP = []
     for mdlidx in range(0, reconsrc.model.N):
-        rawmcmc_chains, mcmc_chains = load_mcmcpkl(lens, mdlidx)
+        rawmcmc_chains, mcmc_chains = load_mcmcpkl(lens, '{:03d}'.format(mdlidx),
+                                                   mcmcdir='mcmc/', discard=0.1)
         imax, (kmeans, centers) = get_mcmcpeaks(mcmc_chains, nclusters=2, verbose=False)
         acc, rej, probs, priors = mcmc_chains
         peaks.append(acc[imax])
