@@ -18,23 +18,38 @@ import gleam.utils.colors as gcl
 gcl.GLEAMcmaps.register_all()
 from mcmc_matching import load_lo, load_lm
 from mcmc_eval import read_mcmctxt
+from match_eval import read_matchlog
 
 
 # Parameter settings
 ids = ['SDSSJ0029-0055', 'SDSSJ0737+3216', 'SDSSJ0753+3416', 'SDSSJ0956+5100',
        'SDSSJ1051+4439', 'SDSSJ1430+6104', 'SDSSJ1627-0053']
 idx = 5
-lens = ids[idx]              # lens name
-pixrad = 11                  # pixrad of resampled kappa map
-sigf = [1., 1., 4., 1.,
-        4., 1., 1.][idx]     # multiplier of the Poisson noise
-dmaxf = [1., 0.25, 1., 0.6, .1, .065, 1.]
-smaxf = [0.25, 0.1, 0.25, 0.15, 0.1, 0.25, 0.25]
-wrad = [.8, .5, .8, .8,
-        .8, .8, .8][idx]     # chi2 radius
-# mdl_range = range(  0,   1)    # range of models to plot
-# angles = [np.random.rand( 11) * 360] * len(mdl_range)  # range of angles to plot
-mdl_range, _, angles = read_mcmctxt('mcmc/mcmceval_{}.txt'.format(lens))
+lens = ids[idx]                                   # lens name
+pixrad = 11                                       # pixrad of resampled kappa map
+sigf = [1., 1., 4., 1., 4., 1., 1.][idx]          # gain multiplier of the Poisson noise
+dmaxf = [1., 0.25, 1., 0.6, .1, .065, 1.]         # data flux limit factors
+smaxf = [0.25, 0.1, 0.25, 0.15, 0.1, 0.25, 0.25]  # source plane (0.25 conserves surface brightness)
+wrad = [.8, .5, .8, .8, .8, .8, .8][idx]          # chi2 radius
+# savedir = 'match_plots/'
+savedir = 'match_plots/'
+
+# load model selection
+mcmcmdl_range, chi2, mcmcangles = read_mcmctxt('mcmc/mcmceval_{}.txt'.format(lens))
+chi2 = np.log(-2*chi2)
+mdir = 'match_plots/{lens}/'.format(lens=lens)
+matchlog = '{}{}_matching.log'.format(mdir, lens)
+matchmdl_range, chi2_psf, matchangles = read_matchlog(matchlog)
+sortidcs = np.argsort(chi2_psf)
+matchmdl_range = matchmdl_range[sortidcs]
+chi2_psf = chi2_psf[sortidcs]
+matchangles = matchangles[sortidcs]
+# mdl_range = mcmcmdl_range
+# angles = mcmcangles
+bestof = 51
+mdl_range = np.concatenate((mcmcmdl_range[:bestof], matchmdl_range[:bestof]))
+angles = np.concatenate((mcmcangles[:bestof], matchangles[:bestof]))
+
 
 
 
