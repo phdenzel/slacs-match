@@ -31,8 +31,8 @@ sdir = os.path.join(mdir, 'sorted')
 bestof = 11
 print(lens)
 
-KAPPA = 1
-ARRIV = 1
+KAPPA = 0
+ARRIV = 0
 KPROF = 1
 savedir = 'models/matches/'
 extension = 'pdf'
@@ -127,8 +127,8 @@ if __name__ == "__main__":
             arrival_time_surface_plot(lm,  # .resampled['obj'],
                                       mdl_index=mdl_idx,
                                       geofactor=gfactor, psifactor=pfactor,
-                                      draw_images=False, contours=True,
-                                      levels=60,
+                                      draw_images=True, contours=True,
+                                      levels=60, search_saddles=0,
                                       min_contour_shift=None,
                                       sad_contour_shift=None,
                                       colorbar=False, origin='lower',
@@ -159,10 +159,16 @@ if __name__ == "__main__":
             refined=True, interpolate=300,
             levels=14, as_range=True, maprad=lm.maprad, pixrad=lm.pixrad, adjust_limits=True,
             annotation_color='black', kappa1_line=True, einstein_radius_indicator=True,
-            label_axes=True, fontsize=20)
+            label_axes=False, fontsize=20)
+        plt.xlabel(r'$\theta$ [arcsec]', fontsize=20)
+        plt.ylabel(r'$\langle\kappa\rangle_\theta$', fontsize=24)
         plt.xlim(right=0.6*np.max(radii))
         plt.tight_layout()
-        r_E = find_einstein_radius(radii[0], profiles[0])
+        r_Es = [find_einstein_radius(r, p) for r, p in zip(radii, profiles)]
+        q = np.percentile(r_Es, [1, 50, 99])
+        q[1] = r_Es[0]
+        print("{:8.6f}_{{-{:8.6f}}}^{{+{:8.6f}}}".format(q[1], np.diff(q)[0], np.diff(q)[1]))
+        r_E = r_Es[0]  # find_einstein_radius(radii[0], profiles[0])
         savename = "{}_{}_best{}_rE@{:6.4f}_kprofile.{}".format(
             lens, qtype, bestof-1, r_E, extension)
         print(savename)
@@ -183,7 +189,9 @@ if __name__ == "__main__":
             refined=True, interpolate=300,
             levels=14, as_range=True, maprad=lm.maprad, pixrad=lm.pixrad, adjust_limits=True,
             annotation_color='black', kappa1_line=True, einstein_radius_indicator=True,
-            label_axes=True, fontsize=20)
+            label_axes=False, fontsize=20)
+        plt.xlabel(r'$\theta$ [arcsec]', fontsize=20)
+        plt.ylabel(r'$\langle\kappa\rangle_\theta$', fontsize=24)
         plt.xlim(right=0.6*np.max(radii))
         plt.tight_layout()
         r_E = find_einstein_radius(radii[0], profiles[0])

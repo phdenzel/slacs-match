@@ -48,8 +48,7 @@ def load_lo(lens, loaddir='data/', extension='json', verbose=False):
 
 def load_lm(lens, loaddir='models/', extension='pkl',
             update_redshift=True, slacs_table='slacs_params.csv',
-            update_pixrad=11,
-            verbose=False):
+            update_pixrad=11, verbose=False):
     """
     Load the LensModels for the SLACS matching from the pickle files
     """
@@ -61,6 +60,8 @@ def load_lm(lens, loaddir='models/', extension='pkl',
     with open(loadfile) as f:
         mdl_pars = pickle.load(f)
         mdl_pars[1].pop('filename')
+        mdl_pars[1].pop('kappa')
+        print(mdl_pars[1])
         lm = LensModel(mdl_pars[0], filename=loadfile, **mdl_pars[1])
     if update_redshift:
         csvf = glob.glob('slacs_params.csv')
