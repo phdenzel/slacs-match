@@ -46,22 +46,25 @@ def load_lo(lens, loaddir='data/', extension='json', verbose=False):
         print(lo.__v__ + "\n")
     return lo
 
-def load_lm(lens, loaddir='models/', extension='pkl',
+def load_lm(lens, specifier='', loaddir='models/', extension='pkl',
             update_redshift=True, slacs_table='slacs_params.csv',
             update_pixrad=11, verbose=False):
     """
     Load the LensModels for the SLACS matching from the pickle files
     """
-    loadfile = glob.glob('{}{}*.{}'.format(loaddir, lens, extension))[0]
+    loadfiles = glob.glob('{}{}*.{}'.format(loaddir, lens, extension))#[0]
+    if len(loadfiles) > 1:
+        loadfile = [f for f in loadfiles if specifier in f][-1]
+    else:
+        loadfile = loadfiles[0]
     if 'pkl' not in extension:
         return NotImplemented
     if verbose:
         print("# <LensModel>")
     with open(loadfile) as f:
         mdl_pars = pickle.load(f)
-        mdl_pars[1].pop('filename')
-        mdl_pars[1].pop('kappa')
-        print(mdl_pars[1])
+        mdl_pars[1].pop('filename', None)
+        mdl_pars[1].pop('kappa', None)
         lm = LensModel(mdl_pars[0], filename=loadfile, **mdl_pars[1])
     if update_redshift:
         csvf = glob.glob('slacs_params.csv')

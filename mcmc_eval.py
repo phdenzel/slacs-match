@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # Imports
 import sys
+import parse
 import numpy as np
 import scipy as sp
 import cPickle as pickle
@@ -61,6 +62,30 @@ def read_mcmctxt(filename):
     logprobs = dta[:, 1]
     theta = dta[:, 2:]
     return mdl_idcs, logprobs, theta
+
+def read_mcmclog(filename, header_lines=1, walkers=1, chain_length=100,
+                 strfrmt='{step:4d}/{N_step:4d}: [{walker:4d}]\t theta [{param:9.4f}]\t logP {logP:9.4f}\t acceptance {acceptance:6.2f}%',
+                 keys=['step', 'N_step', 'walker', 'param', 'logP', 'acceptance']):
+    data = {}
+    with open(filename, 'rb') as f:
+        header = "".join([f.readline() for i in range(header_lines)])
+        data['header'] = header
+        while True:
+            line = f.readline()
+            if not line:
+                break
+            modelstr = line.strip()
+            model = parse.parse('Model {model:4d}', modelstr).named['model']
+            sys.stdout.write("\rModel {:4d}".format(model))
+            data[model] = {k: {walker: [] for walker in range(walkers)} for k in keys}
+            for step in range(chain_length):
+                for walker in range(walkers):
+                    line = f.readline().strip()
+                    parsed = parse.parse(strfrmt, line)
+                    for k in keys:
+                        data[model][k][walker].append(parsed.named[k])
+            f.readline()
+        return data
 
 
 
